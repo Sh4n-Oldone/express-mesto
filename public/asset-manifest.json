@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.65a2ac99.chunk.css",
+    "main.js": "/static/js/main.1a45eed7.chunk.js",
+    "main.js.map": "/static/js/main.1a45eed7.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e8402bce.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e8402bce.js.map",
+    "static/js/2.cb83b232.chunk.js": "/static/js/2.cb83b232.chunk.js",
+    "static/js/2.cb83b232.chunk.js.map": "/static/js/2.cb83b232.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.2e0a5a97e46b33f6408c42a480a1a31c.js": "/precache-manifest.2e0a5a97e46b33f6408c42a480a1a31c.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.65a2ac99.chunk.css.map": "/static/css/main.65a2ac99.chunk.css.map",
+    "static/js/2.cb83b232.chunk.js.LICENSE.txt": "/static/js/2.cb83b232.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/static/media/remove-button.4220563a.svg",
+    "static/media/cousteau.jpg": "/static/media/cousteau.f3e9a11e.jpg",
+    "static/media/edit-profile-icon.svg": "/static/media/edit-profile-icon.d476a8b8.svg",
+    "static/media/logo_white.svg": "/static/media/logo_white.94cbab21.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e8402bce.js",
+    "static/js/2.cb83b232.chunk.js",
+    "static/css/main.65a2ac99.chunk.css",
+    "static/js/main.1a45eed7.chunk.js"
+  ]
+}

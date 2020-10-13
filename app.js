@@ -1,17 +1,13 @@
 const express = require('express');
 const path = require('path');
+const routes = require('./routes/index.js');
+
 const app = express();
 const { PORT = 3000 } = process.env;
-const usersRoutes = require('./routes/users.js');
-const cardsRoutes = require('./routes/cards.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/users', usersRoutes);
-app.use('/cards', cardsRoutes);
-app.use('/', (req, res) => {
-  res.status(404).json({ "message": "Запрашиваемый ресурс не найден" });
-});
+app.use(routes);
 
 app.listen(PORT, () => {
   console.log(`Работаю! Порт: ${PORT}`);

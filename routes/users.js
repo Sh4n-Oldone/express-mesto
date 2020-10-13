@@ -1,23 +1,35 @@
 const usersRouter = require('express').Router();
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const dataPath = path.join(__dirname, '..', 'data', 'users.json');
-const usersData = fs.readFileSync(dataPath, { encoding: 'utf8' });
 
-usersRouter.get('/', (req, res) => {
-  res.status(200).send(JSON.parse(usersData));
-  console.log(`Отдал users: ${usersData}`);
-});
+usersRouter.get('/users', (req, res) => fs.readFile(dataPath, 'utf8')
+  .then((data) => {
+    const usersData = JSON.parse(data);
+    res.send(usersData);
+  })
+  .catch((error) => {
+    console.error('Ошибка отправки списка пользователей: ', error.message);
+    res.status(500).send({ message: 'Ошибка доставки списка пользователей' });
+  }));
 
-usersRouter.get('/:id', (req, res) => {
+usersRouter.get('/users/:id', (req, res) => {
   const { id } = req.params;
-  const reqUser = JSON.parse(usersData).find(user => user._id === id)
-  if (reqUser) {
-    res.status(200).send(reqUser);
-  } else {
-    res.status(404).json({"message": "Нет пользователя с таким id"});
-  }
+
+  return fs.readFile(dataPath, 'utf8')
+    .then((data) => {
+      const reqUser = JSON.parse(data).find((user) => user._id === id);
+      if (reqUser) {
+        res.send(reqUser);
+      } else {
+        res.status(404).json({ message: 'Нет такого пользователя' });
+      }
+    })
+    .catch((error) => {
+      console.error('Ошибка отправки пользователя: ', error.message);
+      res.status(500).send({ message: 'Ошибка отправки пользователя' });
+    });
 });
 
 module.exports = usersRouter;

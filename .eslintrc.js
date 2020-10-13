@@ -6,9 +6,8 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:react/recommended',
     'airbnb',
-    "airbnb-base",
+    'airbnb-base',
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -17,9 +16,9 @@ module.exports = {
     ecmaVersion: 12,
   },
   plugins: [
-    'react',
+
   ],
   rules: {
-    'no-underscore-dangle': 'allow',
+    'no-underscore-dangle': ['error', { allow: ['_id'] }],
   },
 };

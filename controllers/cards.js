@@ -2,36 +2,67 @@ const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then(cards => res.send(cards))
-    .catch(() => res.status(500).send({ message: 'Ошибка доставки карточек' }))
-}
+    .then((cards) => {
+      if (cards) {
+        return res.status(200).send(cards);
+      }
+      return res.status(404).send({ message: 'Карточки отсутствуют' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка доставки карточек' });
+    });
+};
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .catch((err) => res.status(400).send({ message: err.message })) // ошибка входных данных
-    .then(card => res.send(card))
-    .catch(() => res.status(500).send({ message: 'Ошибка создания карточки' }))
-}
+    .then((card) => res.status(200).send({ message: `Карточка ${card} создана` }))
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка создания на сервере' });
+    });
+};
 
 module.exports.removeCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId, (error, deletedCard) => {
-    if (!error) {
-      return res.status(200).send({ message: `${deletedCard} - удалена` })
-    }
-    return res.status(404).send({ message: 'Карточка не найдена' })
-  })
-    .catch(() => res.status(500).send({ message: 'Ошибка при удалении карточки' }))
-}
+  Card.findOne({ _id: req.params.cardId })
+    .then((card) => {
+      if (card) {
+        Card.deleteOne(card);
+        return res.status(200).send({ message: 'Карточка удалена' });
+      }
+      return res.status(404).send({ message: 'Карточка не найдена' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка удаления карточки' });
+    });
+};
 
 module.exports.getCard = (req, res) => {
-  Card.find({ _id: req.params.cardId }, (error, requestedCard) => {
-    if (!error) {
-      return res.status(200).send(requestedCard)
-    }
-      return res.status(404).send({ message: 'Карточка не найдена' })
-  })
-    .catch(() => res.status(500).send({ message: 'Ошибка при поиске карточки' }))
-}
+  Card.findOne({ _id: req.params.cardId })
+    .then((card) => {
+      if (card) {
+        return res.status(200).send(card);
+      }
+      return res.status(404).send({ message: 'Карточка не найдена' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка отправки карточки' });
+    });
+};

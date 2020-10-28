@@ -19,11 +19,12 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(v) {
         return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(v);
-      }, message: props => `${props.value} - некорректная ссылка!`
-    }
-  }
+      },
+      message: 'Некорректная ссылка на аватар!',
+    },
+  },
 }, {
-  versionKey: false
+  versionKey: false,
 });
 
 module.exports = mongoose.model('user', userSchema);

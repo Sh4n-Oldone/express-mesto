@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const user = require('./user');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -14,8 +13,9 @@ const cardSchema = new mongoose.Schema({
     validate: {
       validator(v) {
         return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(v);
-      }, message: props => `${props.value} - некорректная ссылка!`
-    }
+      },
+      message: 'Некорректная ссылка на изображение!',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,9 +29,9 @@ const cardSchema = new mongoose.Schema({
   createAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 }, {
-  versionKey: false
+  versionKey: false,
 });
 
 module.exports = mongoose.model('card', cardSchema);

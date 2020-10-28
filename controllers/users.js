@@ -2,26 +2,48 @@ const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then(users => res.send(users))
-    .catch(() => res.status(500).send({ message: 'Ошибка доставки пользователей' }))
+    .then((users) => {
+      if (users) {
+        return res.status(200).send(users);
+      }
+      return res.status(404).send({ message: 'Пользователи отсутствуют' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка доставки пользователей' });
+    });
 };
 
 module.exports.getUser = (req, res) => {
   User.findOne({ _id: req.params.userId })
     .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' })
+      if (user) {
+        return res.status(200).send(user);
       }
-      return res.status(200).send(user)
+      return res.status(404).send({ message: 'Пользователь не найден' });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка доставки выбранного пользователя' }))
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка доставки выбранного пользователя' });
+    });
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .catch((err) => res.status(400).send({ message: err.message })) // ошибка входных данных
-    .then(user => res.status(200).send(user))
-    .catch(() => res.status(500).send({ message: 'Ошибка создания нового пользователя' }));
+    .then((user) => res.status(200).send({ message: `Пользователь ${user} создан` }))
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка сервера при создании пользователя' });
+    });
 };

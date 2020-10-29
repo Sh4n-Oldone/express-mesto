@@ -29,5 +29,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Работаю! Порт: ${PORT}`);
 });

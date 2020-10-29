@@ -25,6 +25,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(200).send({ message: `Карточка ${card} создана` }))
     .catch((err) => {
       const ERROR_CODE = 400;
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка ввода данных' });
+      }
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
       }

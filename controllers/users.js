@@ -41,6 +41,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(200).send({ message: `Пользователь ${user} создан` }))
     .catch((err) => {
       const ERROR_CODE = 400;
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка ввода данных' });
+      }
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
       }

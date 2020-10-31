@@ -69,3 +69,43 @@ module.exports.getCard = (req, res) => {
       return res.status(500).send({ message: 'Ошибка отправки карточки' });
     });
 };
+
+module.exports.putLikeCard = async (req, res) => {
+  try {
+    const likingCard = await Card.findByIdAndUpdate(
+      req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true },
+    );
+    if (!likingCard) {
+      return res.status(404).send({ message: 'Карточка не найдена' });
+    }
+    return res.status(200).send({ message: 'Лайк поставлен успешно' });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: 'Ошибка валидации' });
+    }
+    if (err.name === 'CastError') {
+      return res.status(400).send({ message: 'Ошибка ввода' });
+    }
+    return res.status(500).send({ message: 'Ошибка сервера при постановке лайка' });
+  }
+};
+
+module.exports.dislikeCard = async (req, res) => {
+  try {
+    const dislikingCard = await Card.findByIdAndUpdate(
+      req.params.cardId, { $pull: { likes: req.user._id } }, { new: true },
+    );
+    if (!dislikingCard) {
+      return res.status(404).send({ message: 'Карточка не найдена' });
+    }
+    return res.status(200).send({ message: 'Лайк снят успешно' });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: 'Ошибка валидации' });
+    }
+    if (err.name === 'CastError') {
+      return res.status(400).send({ message: 'Ошибка ввода' });
+    }
+    return res.status(500).send({ message: 'Ошибка сервера при удалении лайка' });
+  }
+};

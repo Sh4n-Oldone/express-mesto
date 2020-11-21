@@ -20,8 +20,11 @@
   },
   "homepage": "/",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
-    "mongoose": "^5.10.10"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.10",
+    "validator": "^13.1.17"
   },
   "devDependencies": {
     "eslint": "^7.11.0",

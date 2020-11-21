@@ -1,12 +1,15 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/notFoundError');
 
 module.exports.getUsers = (req, res) => {
-  User.find({})
+  User.find({}).select('+password')
     .then((users) => {
       if (users) {
         return res.status(200).send(users);
       }
       return res.status(404).send({ message: 'Пользователи отсутствуют' });
+      // throw new NotFoundError('Пользователи не найдены');
     })
     .catch((err) => {
       const ERROR_CODE = 400;
@@ -18,7 +21,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findOne({ _id: req.params.userId })
+  User.findOne({ _id: req.params.userId }).select('+password')
     .then((user) => {
       if (user) {
         return res.status(200).send(user);
@@ -35,10 +38,14 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ message: `Пользователь ${user} создан` }))
+  User.create({
+    email, password, name, about, avatar,
+  })
+    .then((user) => res.status(200).send({ message: `Пользователь ${user.email} создан` }))
     .catch((err) => {
       const ERROR_CODE = 400;
       if (err.name === 'ValidationError') {
@@ -93,4 +100,42 @@ module.exports.updateUserAvatar = async (req, res) => {
     }
     return res.status(500).send({ message: 'Ошибка сервера при создании пользователя' });
   }
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      // res.send({ token });
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        expires: '7d',
+      });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
+module.exports.getMe = (req, res) => {
+  const { email } = req.body;
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (user) {
+        return res.status(200).send(user);
+      }
+      return res.status(404).send({ message: 'Пользователь не найден' });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
+      }
+      return res.status(500).send({ message: 'Ошибка доставки выбранного пользователя' });
+    });
 };

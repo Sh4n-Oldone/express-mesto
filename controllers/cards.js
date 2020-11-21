@@ -39,8 +39,11 @@ module.exports.removeCard = (req, res) => {
   Card.findOne({ _id: req.params.cardId })
     .then((card) => {
       if (card) {
-        Card.deleteOne(card);
-        return res.status(200).send({ message: 'Карточка удалена' });
+        if (card.owner._id === req.user._id) {
+          Card.deleteOne(card);
+          return res.status(200).send({ message: 'Карточка удалена' });
+        }
+        return res.status(401).send({ message: 'Ошибка авторизации' });
       }
       return res.status(404).send({ message: 'Карточка не найдена' });
     })

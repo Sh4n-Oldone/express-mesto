@@ -1,41 +1,28 @@
+const NotFoundError = require('../errors/notFoundError');
+const NotAuthorizeError = require('../errors/notAuthorizeError');
 const Card = require('../models/card');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      if (cards) {
-        return res.status(200).send(cards);
+      if (!cards) {
+        throw new NotFoundError('Карточки отсутствуют');
       }
-      return res.status(404).send({ message: 'Карточки отсутствуют' });
+      return res.status(200).send(cards);
     })
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
-      }
-      return res.status(500).send({ message: 'Ошибка доставки карточек' });
-    });
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ message: `Карточка ${card} создана` }))
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка ввода данных' });
-      }
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
-      }
-      return res.status(500).send({ message: 'Ошибка создания на сервере' });
-    });
+    .catch(next);
 };
 
-module.exports.removeCard = (req, res) => {
+module.exports.removeCard = (req, res, next) => {
   Card.findOne({ _id: req.params.cardId })
     .then((card) => {
       if (card) {
@@ -43,72 +30,48 @@ module.exports.removeCard = (req, res) => {
           Card.deleteOne(card);
           return res.status(200).send({ message: 'Карточка удалена' });
         }
-        return res.status(401).send({ message: 'Ошибка авторизации' });
+        throw new NotAuthorizeError('Ошибка авторизации');
       }
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      throw new NotFoundError('Карточка не найдена');
     })
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
-      }
-      return res.status(500).send({ message: 'Ошибка удаления карточки' });
-    });
+    .catch(next);
 };
 
-module.exports.getCard = (req, res) => {
+module.exports.getCard = (req, res, next) => {
   Card.findOne({ _id: req.params.cardId })
     .then((card) => {
-      if (card) {
-        return res.status(200).send(card);
+      if (!card) {
+        throw new NotFoundError('Карточка не найдена');
       }
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      return res.status(200).send(card);
     })
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Ошибка ввода' });
-      }
-      return res.status(500).send({ message: 'Ошибка отправки карточки' });
-    });
+    .catch(next);
 };
 
-module.exports.putLikeCard = async (req, res) => {
+module.exports.putLikeCard = async (req, res, next) => {
   try {
     const likingCard = await Card.findByIdAndUpdate(
       req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true },
     );
     if (!likingCard) {
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      throw new NotFoundError('Карточка не найдена');
     }
     return res.status(200).send({ message: 'Лайк поставлен успешно' });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: 'Ошибка валидации' });
-    }
-    if (err.name === 'CastError') {
-      return res.status(400).send({ message: 'Ошибка ввода' });
-    }
-    return res.status(500).send({ message: 'Ошибка сервера при постановке лайка' });
+    return next(err);
   }
 };
 
-module.exports.dislikeCard = async (req, res) => {
+module.exports.dislikeCard = async (req, res, next) => {
   try {
     const dislikingCard = await Card.findByIdAndUpdate(
       req.params.cardId, { $pull: { likes: req.user._id } }, { new: true },
     );
     if (!dislikingCard) {
-      return res.status(404).send({ message: 'Карточка не найдена' });
+      throw new NotFoundError('Карточка не найдена');
     }
     return res.status(200).send({ message: 'Лайк снят успешно' });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: 'Ошибка валидации' });
-    }
-    if (err.name === 'CastError') {
-      return res.status(400).send({ message: 'Ошибка ввода' });
-    }
-    return res.status(500).send({ message: 'Ошибка сервера при удалении лайка' });
+    return next(err);
   }
 };

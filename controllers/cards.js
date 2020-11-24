@@ -26,7 +26,7 @@ module.exports.removeCard = (req, res, next) => {
   Card.findOne({ _id: req.params.cardId })
     .then((card) => {
       if (card) {
-        if (String(card.owner._id) === req.user._id) {
+        if (JSON.stringify(card.owner._id) === req.user._id) {
           Card.deleteOne(card);
           return res.status(200).send({ message: 'Карточка удалена' });
         }

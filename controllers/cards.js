@@ -27,9 +27,10 @@ module.exports.removeCard = (req, res, next) => {
   Card.findOne({ _id: chosenCard })
     .then((card) => {
       if (card) {
+        console.log(card);
         // eslint-disable-next-line eqeqeq
         if (card.owner._id == req.user._id) {
-          Card.deleteOne({ _id: ObjectId(chosenCard) });
+          Card.deleteOne({ _id: chosenCard });
           // Card.deleteOne(card);
           return res.status(200).send({ message: 'Карточка удалена' });
         }

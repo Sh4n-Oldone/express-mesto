@@ -3,12 +3,12 @@ const NotAuthorizeError = require('../errors/notAuthorizeError');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res, next) => {
-  Card.find({})
+  Card.find({}).sort({ createAt: -1 })
     .then((cards) => {
       if (!cards) {
         throw new NotFoundError('Карточки отсутствуют');
       }
-      return res.status(200).send(cards.sort({ createAt: -1 }));
+      return res.status(200).send(cards);
     })
     .catch(next);
 };

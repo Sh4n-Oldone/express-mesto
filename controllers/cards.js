@@ -29,7 +29,7 @@ module.exports.removeCard = (req, res, next) => {
       if (card) {
         // eslint-disable-next-line eqeqeq
         if (card.owner._id == req.user._id) {
-          Card.deleteOne({ _id: chosenCard }).then((data) => res.status(200).send({ message: 'Карточка удалена' }));
+          return Card.deleteOne({ _id: chosenCard }).then(() => res.status(200).send({ message: 'Карточка удалена' }));
           // Card.deleteOne(card);
         }
         throw new NotAuthorizeError('Ошибка авторизации');

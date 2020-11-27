@@ -58,7 +58,7 @@ module.exports.putLikeCard = async (req, res, next) => {
     if (!likingCard) {
       throw new NotFoundError('Карточка не найдена');
     }
-    return res.status(200).send({ message: 'Лайк поставлен успешно' });
+    return res.status(200).send(likingCard);
   } catch (err) {
     return next(err);
   }
@@ -72,7 +72,7 @@ module.exports.dislikeCard = async (req, res, next) => {
     if (!dislikingCard) {
       throw new NotFoundError('Карточка не найдена');
     }
-    return res.status(200).send({ message: 'Лайк снят успешно' });
+    return res.status(200).send(dislikingCard);
   } catch (err) {
     return next(err);
   }

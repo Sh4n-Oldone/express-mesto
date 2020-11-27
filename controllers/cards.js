@@ -23,12 +23,14 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.removeCard = (req, res, next) => {
-  Card.findOne({ _id: req.params.cardId })
+  const chosenCard = req.params.cardId;
+  Card.findOne({ _id: chosenCard })
     .then((card) => {
       if (card) {
         // eslint-disable-next-line eqeqeq
         if (card.owner._id == req.user._id) {
-          Card.deleteOne(card);
+          Card.deleteOne({ _id: ObjectId(chosenCard) });
+          // Card.deleteOne(card);
           return res.status(200).send({ message: 'Карточка удалена' });
         }
         throw new NotAuthorizeError('Ошибка авторизации');

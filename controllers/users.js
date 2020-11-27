@@ -57,7 +57,7 @@ module.exports.updateUser = async (req, res, next) => {
     if (!updatedUser) {
       throw new NotFoundError('Пользователь не обнаружен');
     }
-    return res.status(200).send({ message: `Профиль обновлён ${updatedUser}` });
+    return res.status(200).send(updatedUser);
   } catch (err) {
     return next(err);
   }
@@ -73,7 +73,7 @@ module.exports.updateUserAvatar = async (req, res, next) => {
     if (!updatedUser) {
       throw new NotFoundError('Пользователь не обнаружен');
     }
-    return res.status(200).send({ message: `Аватар обновлён ${updatedUser}` });
+    return res.status(200).send(updatedUser);
   } catch (err) {
     return next(err);
   }
@@ -85,11 +85,6 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-
-      // res.cookie('access_token', token, {
-      //   httpOnly: true,
-      //   expires: '7d',
-      // });
       res.send({ token });
     })
     .catch(next);

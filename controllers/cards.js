@@ -8,7 +8,7 @@ module.exports.getCards = (req, res, next) => {
       if (!cards) {
         throw new NotFoundError('Карточки отсутствуют');
       }
-      return res.status(200).send(cards);
+      return res.status(200).send(cards.sort({ createAt: -1 }));
     })
     .catch(next);
 };

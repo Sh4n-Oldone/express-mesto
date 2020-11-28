@@ -1,10 +1,8 @@
 require('dotenv').config();
 
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-// const { urlencoded } = require('express');
 const { errors, celebrate, Joi } = require('celebrate');
 const { errorLogger } = require('express-winston');
 const cors = require('cors');
@@ -23,13 +21,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-// app.use(urlencoded({ extended: true }));
-// app.use(express.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 app.options('*', cors());

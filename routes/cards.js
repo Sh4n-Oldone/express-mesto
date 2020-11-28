@@ -11,31 +11,9 @@ cardsRouter.post('/cards', celebrate({
     link: Joi.string().required(),
   }),
 }), createCard);
-cardsRouter.delete('/cards/:cardId', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.objectId().required(),
-  }),
-}), removeCard);
-cardsRouter.get('/cards/:cardId', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.objectId().required(),
-  }),
-}), getCard);
-cardsRouter.put('/cards/:cardId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.objectId().required(),
-  }),
-  user: Joi.object().keys({
-    _id: Joi.objectId().required(),
-  }),
-}), putLikeCard);
-cardsRouter.delete('/cards/:cardId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.objectId().required(),
-  }),
-  user: Joi.object().keys({
-    _id: Joi.objectId().required(),
-  }),
-}), dislikeCard);
+cardsRouter.delete('/cards/:cardId', removeCard);
+cardsRouter.get('/cards/:cardId', getCard);
+cardsRouter.put('/cards/:cardId/likes', putLikeCard);
+cardsRouter.delete('/cards/:cardId/likes', dislikeCard);
 
 module.exports = cardsRouter;

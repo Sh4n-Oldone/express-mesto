@@ -5,7 +5,9 @@ const {
 } = require('../controllers/users');
 
 usersRouter.get('/users', getUsers);
-usersRouter.get('/users/me', getMe);
+usersRouter.get('/users/me', celebrate({
+  _id: Joi.string().max(24),
+}), getMe);
 usersRouter.get('/users/:userId', getUser);
 usersRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({

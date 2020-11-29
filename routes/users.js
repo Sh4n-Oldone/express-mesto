@@ -7,9 +7,7 @@ const {
 usersRouter.get('/users', getUsers);
 usersRouter.get('/users/me', celebrate({
   body: Joi.object.keys({
-    user: Joi.object().keys({
-      _id: Joi.string().max(24),
-    }),
+    user: Joi.object(),
   }),
 }), getMe);
 usersRouter.get('/users/:userId', getUser);

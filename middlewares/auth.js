@@ -8,16 +8,12 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization && !authorization.startsWith('Bearer ')) {
-    // return res
-    //   .status(401)
-    //   .send({ message: 'Необходима авторизация' });
     throw new NotAuthorizeError('Необходима авторизация');
   }
 
   try {
     const token = authorization.replace('Bearer ', '');
     if (!token) {
-      // return res.status(401).send({ message: 'Необходима авторизация' });
       throw new NotAuthorizeError('Необходима авторизация');
     }
 
@@ -25,7 +21,6 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    // return res.status(401).send({ message: 'Необходима авторизация' });
     return next(err);
   }
 };
